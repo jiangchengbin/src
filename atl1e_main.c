@@ -1829,7 +1829,8 @@ atl1e_set_multi(struct net_device *netdev)
 {
     struct atl1e_adapter *adapter = netdev_priv(netdev);
     struct atl1e_hw *hw = &adapter->hw;
-    struct dev_mc_list *mc_ptr;
+    struct netdev_hw_addr *ha;//marsa
+//marsm    struct dev_mc_list *mc_ptr;
     u32 rctl;
     u32 hash_value;
 
@@ -1856,10 +1857,14 @@ atl1e_set_multi(struct net_device *netdev)
 
     /* comoute mc addresses' hash value ,and put it into hash table */
 
-    for(mc_ptr = netdev->mc_list; mc_ptr; mc_ptr = mc_ptr->next) {
-        hash_value = atl1e_hash_mc_addr(hw, mc_ptr->dmi_addr);
-        atl1e_hash_set(hw, hash_value);
-    }
+	netdev_for_each_mc_addr(ha, netdev) {					//marsa
+		hash_value = atl1e_hash_mc_addr(hw, ha->addr);			//marsa
+		atl1e_hash_set(hw, hash_value);					//marsa
+	}									//marsa
+//marsm    for(mc_ptr = netdev->mc_list; mc_ptr; mc_ptr = mc_ptr->next) {
+//marsm        hash_value = atl1e_hash_mc_addr(hw, mc_ptr->dmi_addr);
+//marsm        atl1e_hash_set(hw, hash_value);
+//marsm    }
 }
 
 

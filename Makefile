@@ -96,6 +96,7 @@ else
   endif
   CONFIG_FILE  := $(KSRC)/include/linux/autoconf.h
 endif
+  CONFIG_FILE  := $(KSRC)/include/generated/autoconf.h
 
 ifeq (,$(wildcard $(VERSION_FILE)))
   $(error Linux kernel source not configured - missing version.h)
@@ -169,10 +170,10 @@ endif
 
 KKVER := $(shell echo $(KVER) | \
          awk '{ if ($$0 ~ /2\.[4-9]\./) print "1"; else print "0"}')
-ifeq ($(KKVER), 0)
-  $(error *** Aborting the build. \
-          *** This driver is not supported on kernel versions older than 2.4.0)
-endif
+#ifeq ($(KKVER), 0)
+#  $(error *** Aborting the build. \
+#          *** This driver is not supported on kernel versions older than 2.4.0)
+#endif
 
 # set the install path
 INSTDIR := /lib/modules/$(KVER)/kernel/drivers/net/$(DRIVER_NAME)
@@ -300,9 +301,9 @@ $(MANFILE).gz: ../$(MANFILE)
 
 install: default $(MANFILE).gz
 	# remove all old versions of the driver
-	find $(INSTALL_MOD_PATH)/lib/modules/$(KVER) -name $(TARGET) -exec rm -f {} \; || true
-	find $(INSTALL_MOD_PATH)/lib/modules/$(KVER) -name $(TARGET).gz -exec rm -f {} \; || true
-	install -D -m 644 $(TARGET) $(INSTALL_MOD_PATH)$(INSTDIR)/$(TARGET)
+#	find $(INSTALL_MOD_PATH)/lib/modules/$(KVER) -name $(TARGET) -exec rm -f {} \; || true
+#	find $(INSTALL_MOD_PATH)/lib/modules/$(KVER) -name $(TARGET).gz -exec rm -f {} \; || true
+	install -D -m 644 $(TARGET) $(INSTALL_MOD_PATH)/lib/modules/`uname -r`/kernel/drivers/net/$(TARGET)
 ifeq (,$(INSTALL_MOD_PATH))
 	/sbin/depmod -a || true
 else

@@ -336,7 +336,8 @@ static void atl1c_set_multi(struct net_device *netdev)
 {
 	struct atl1c_adapter *adapter = netdev_priv(netdev);
 	struct atl1c_hw *hw = &adapter->hw;
-	struct dev_mc_list *mc_ptr;
+	struct netdev_hw_addr *ha;//marsa
+//marsm	struct dev_mc_list *mc_ptr;
 	u32 mac_ctrl_data = 0;
 	u32 hash_value;
 
@@ -359,10 +360,14 @@ static void atl1c_set_multi(struct net_device *netdev)
 	AT_WRITE_REG_ARRAY(hw, REG_RX_HASH_TABLE, 1, 0);
 
 	/* comoute mc addresses' hash value ,and put it into hash table */
-	for (mc_ptr = netdev->mc_list; mc_ptr; mc_ptr = mc_ptr->next) {
-		hash_value = atl1c_hash_mc_addr(hw, mc_ptr->dmi_addr);
-		atl1c_hash_set(hw, hash_value);
-	}
+	netdev_for_each_mc_addr(ha, netdev) {						//marsa
+		hash_value = atl1c_hash_mc_addr(hw, ha->addr);				//marsa
+		atl1c_hash_set(hw, hash_value);						//marsa
+	}										//marsa
+//marsm	for (mc_ptr = netdev->mc_list; mc_ptr; mc_ptr = mc_ptr->next) {
+//marsm		hash_value = atl1c_hash_mc_addr(hw, mc_ptr->dmi_addr);
+//marsm		atl1c_hash_set(hw, hash_value);
+//marsm	}
 }
 
 #ifdef NETIF_F_HW_VLAN_TX
